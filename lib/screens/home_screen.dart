@@ -16,7 +16,7 @@ import 'profile_screen.dart';
 typedef PostItem = Map<String, dynamic>;
 
 /// Layar utama aplikasi yang menampilkan ringkasan profil, daftar catatan kuliah,
-/// serta data referensi dari HTTP API publik.
+/// serta data referensi dari HTTP API publik dengan navigasi bawah.
 class HomeScreen extends StatefulWidget {
   /// Konstruktor [HomeScreen].
   const HomeScreen({super.key});
@@ -26,6 +26,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  int _selectedIndex = 0;
   List<PostItem> _apiPosts = [];
   bool _isApiLoading = true;
   String? _apiErrorMessage;
@@ -218,131 +219,124 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final provider = AppProvider.of(context);
     final colorScheme = Theme.of(context).colorScheme;
-    final hasValidPhoto = provider.student.photoUrl.startsWith('http');
 
-    return DefaultTabController(
-      length: 2,
-      child: Scaffold(
-        appBar: AppBar(
-          toolbarHeight: 64,
-          title: Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(6),
-                decoration: BoxDecoration(
-                  color: colorScheme.primaryContainer,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Icon(
-                  Icons.account_balance,
-                  size: 30,
-                  color: colorScheme.primary,
-                ),
-              ),
-              const SizedBox(width: 12),
-              const Flexible(
-                child: Text(
-                  'Catatan Kuliah',
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            ],
-          ),
-          actions: [
-            IconButton(
-              tooltip: provider.themeMode == ThemeMode.dark
-                  ? 'Mode Terang'
-                  : 'Mode Gelap',
-              icon: Icon(
-                provider.themeMode == ThemeMode.dark
-                    ? Icons.light_mode_outlined
-                    : Icons.dark_mode_outlined,
-              ),
-              onPressed: provider.toggleTheme,
-            ),
-            IconButton(
-              tooltip: 'Profil Mahasiswa',
-              icon: const Icon(Icons.account_circle_outlined),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const ProfileScreen()),
-                );
-              },
-            ),
-          ],
-          bottom: const TabBar(
-            tabs: [
-              Tab(icon: Icon(Icons.note_outlined), text: 'Catatan Saya'),
-              Tab(icon: Icon(Icons.public_outlined), text: 'Referensi API'),
-            ],
-          ),
-        ),
-        body: Column(
+    return Scaffold(
+      appBar: AppBar(
+        toolbarHeight: 64,
+        title: Row(
           children: [
             Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              color: colorScheme.primaryContainer.withOpacity(0.45),
-              child: Row(
-                children: [
-                  CircleAvatar(
-                    radius: 20,
-                    backgroundColor: colorScheme.primary,
-                    backgroundImage: hasValidPhoto
-                        ? NetworkImage(provider.student.photoUrl)
-                        : null,
-                    child: hasValidPhoto
-                        ? null
-                        : Text(
-                            provider.student.name.isNotEmpty
-                                ? provider.student.name[0].toUpperCase()
-                                : 'M',
-                            style: TextStyle(
-                              color: colorScheme.onPrimary,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          provider.student.name,
-                          style:
-                              Theme.of(context).textTheme.titleSmall?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        Text(
-                          'NIM: ${provider.student.nim} | ${provider.student.programStudi}',
-                          style: Theme.of(context).textTheme.bodySmall,
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+              padding: const EdgeInsets.all(6),
+              decoration: BoxDecoration(
+                color: colorScheme.primaryContainer,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Icon(
+                Icons.account_balance,
+                size: 30,
+                color: colorScheme.primary,
               ),
             ),
-            Expanded(
-              child: TabBarView(
-                children: [
-                  _buildNotesTab(provider),
-                  _buildApiReferenceTab(colorScheme),
-                ],
+            const SizedBox(width: 12),
+            const Flexible(
+              child: Text(
+                'Catatan Kuliah',
+                overflow: TextOverflow.ellipsis,
               ),
             ),
           ],
         ),
-        floatingActionButton: FloatingActionButton.extended(
-          onPressed: _navigateToAddNote,
-          icon: const Icon(Icons.add),
-          label: const Text('Catatan Baru'),
-        ),
+        actions: [
+          IconButton(
+            tooltip: provider.themeMode == ThemeMode.dark
+                ? 'Mode Terang'
+                : 'Mode Gelap',
+            icon: Icon(
+              provider.themeMode == ThemeMode.dark
+                  ? Icons.light_mode_outlined
+                  : Icons.dark_mode_outlined,
+            ),
+            onPressed: provider.toggleTheme,
+          ),
+          IconButton(
+            tooltip: 'Profil Mahasiswa',
+            icon: const Icon(Icons.account_circle_outlined),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const ProfileScreen()),
+              );
+            },
+          ),
+        ],
+      ),
+      body: Column(
+        children: [
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            color: colorScheme.primaryContainer.withValues(alpha: 0.45),
+            child: Row(
+              children: [
+                CircleAvatar(
+                  radius: 20,
+                  backgroundColor: colorScheme.primary,
+                  backgroundImage: const AssetImage('assets/images/profil.jpg'),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        provider.student.name,
+                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      Text(
+                        'NIM: ${provider.student.nim} | ${provider.student.programStudi}',
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: _selectedIndex == 0
+                ? _buildNotesTab(provider)
+                : _buildApiReferenceTab(colorScheme),
+          ),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: _navigateToAddNote,
+        icon: const Icon(Icons.add),
+        label: const Text('Catatan Baru'),
+      ),
+      bottomNavigationBar: NavigationBar(
+        selectedIndex: _selectedIndex,
+        onDestinationSelected: (index) {
+          setState(() {
+            _selectedIndex = index;
+          });
+        },
+        destinations: const [
+          NavigationDestination(
+            icon: Icon(Icons.note_outlined),
+            selectedIcon: Icon(Icons.note),
+            label: 'Catatan Saya',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.public_outlined),
+            selectedIcon: Icon(Icons.public),
+            label: 'Referensi API',
+          ),
+        ],
       ),
     );
   }

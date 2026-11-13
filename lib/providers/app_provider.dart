@@ -79,7 +79,7 @@ class _AppProviderWrapperState extends State<AppProviderWrapper> {
     name: 'Fatra Abby Nur Alwizza',
     nim: '25.11.6543',
     programStudi: 'S1 Informatika',
-    email: 'fatra.6543@students.amikom.ac.id',
+    email: 'f.abby@students.amikom.ac.id',
   );
 
   List<Note> _notes = [];

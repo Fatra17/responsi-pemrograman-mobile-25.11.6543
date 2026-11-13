@@ -26,7 +26,7 @@ class ProfileCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final hasValidPhoto = student.photoUrl.startsWith('http');
+    // final hasValidPhoto = student.photoUrl.startsWith('http');
 
     return Container(
       width: double.infinity,
@@ -50,18 +50,18 @@ class ProfileCard extends StatelessWidget {
               CircleAvatar(
                 radius: 34,
                 backgroundColor: colorScheme.primaryContainer,
-                backgroundImage:
-                    hasValidPhoto ? NetworkImage(student.photoUrl) : null,
-                child: hasValidPhoto
-                    ? null
-                    : Text(
-                        _getInitials(student.name),
-                        style: TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                          color: colorScheme.onPrimaryContainer,
-                        ),
-                      ),
+                backgroundImage: const AssetImage('assets/images/profil.jpg'),
+                //     hasValidPhoto ? NetworkImage(student.photoUrl) : null,
+                // child: hasValidPhoto
+                //     ? null
+                //     : Text(
+                //         _getInitials(student.name),
+                //         style: TextStyle(
+                //           fontSize: 22,
+                //           fontWeight: FontWeight.bold,
+                //           color: colorScheme.onPrimaryContainer,
+                //         ),
+                //       ),
               ),
               const SizedBox(width: 16),
               Expanded(
